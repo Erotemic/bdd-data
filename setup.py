@@ -59,10 +59,6 @@ def parse_requirements(fname='requirements.txt', with_version=False):
 
     Returns:
         List[str]: list of requirements items
-
-    CommandLine:
-        python -c "import setup; print(setup.parse_requirements())"
-        python -c "import setup; print(chr(10).join(setup.parse_requirements(with_version=True)))"
     """
     from os.path import exists
     import re
@@ -92,9 +88,8 @@ def parse_requirements(fname='requirements.txt', with_version=False):
                     op, rest = parts[1:]
                     if ';' in rest:
                         # Handle platform specific dependencies
-                        # http://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-platform-specific-dependencies
-                        version, platform_deps = map(str.strip, rest.split(';'))
-                        info['platform_deps'] = platform_deps
+                        version, plat_deps = map(str.strip, rest.split(';'))
+                        info['platform_deps'] = plat_deps
                     else:
                         version = rest  # NOQA
                     info['version'] = (op, version)
@@ -116,9 +111,9 @@ def parse_requirements(fname='requirements.txt', with_version=False):
                     parts.extend(info['version'])
                 if not sys.version.startswith('3.4'):
                     # apparently package_deps are broken in 3.4
-                    platform_deps = info.get('platform_deps')
-                    if platform_deps is not None:
-                        parts.append(';' + platform_deps)
+                    plat_deps = info.get('platform_deps')
+                    if plat_deps is not None:
+                        parts.append(';' + plat_deps)
                 item = ''.join(parts)
                 yield item
 
@@ -127,7 +122,7 @@ def parse_requirements(fname='requirements.txt', with_version=False):
 
 
 NAME = 'bdd_data'
-VERSION = parse_version('bdd_data/__init__.py')  # must be global for git tags
+VERSION = parse_version('bdd_data/__init__.py')
 
 
 if __name__ == '__main__':
